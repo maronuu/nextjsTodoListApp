@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import useLocalStorageState from "use-local-storage-state";
 
 
 type TaskStatus = "wip" | "done";
@@ -13,11 +14,14 @@ interface Task {
 const TodoListPage = () => {
 
   const [inputText, setInputText] = useState("")
-  const [taskList, setTaskList] = useState<Task[]>([]);
+  const [taskList, setTaskList] = useLocalStorageState<Task[]>("taskList", {
+    "defaultValue": []
+  })
+  // const [taskList, setTaskList] = useState<Task[]>([])
   const [nextTaskId, setNextTaskId] = useState(0);
 
   useEffect(() => {
-    localStorage.setItem("taskList", JSON.stringify(taskList))
+    // localStorage.setItem("taskList", JSON.stringify(taskList))
   });
 
   function registerNewTask(name: string) {
