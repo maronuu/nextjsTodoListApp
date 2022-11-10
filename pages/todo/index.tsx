@@ -1,34 +1,59 @@
 import { useEffect, useState } from "react"
 
+
+type TaskStatus = "wip" | "done";
+
 interface Task {
   id: number,
   name: string,
   description: string,
+  status: TaskStatus,
 }
 
 const TodoListPage = () => {
-  const exampleObj: Task = {
-    id: 1234,
-    name: "Example",
-    description: "Example",
-  }
 
   const [inputText, setInputText] = useState("")
-  const [taskList, setTaskList] = useState<Task[]>([])
+  const [taskList, setTaskList] = useState<Task[]>([]);
   const [nextTaskId, setNextTaskId] = useState(0);
 
   useEffect(() => {
-    localStorage.setItem("taskList", JSON.stringify(taskList));
+    localStorage.setItem("taskList", JSON.stringify(taskList))
   });
 
   function registerNewTask(name: string) {
-    const newTask = {
+    const newTask: Task = {
       id: nextTaskId,
       name: name,
       description: "foo",
+      status: "wip",
     }
     setTaskList([...taskList, newTask])
-    setNextTaskId(nextTaskId + 1);
+    setNextTaskId(nextTaskId + 1)
+  }
+
+  function changeTaskStatus(id: number) {
+    const updatedTaskList = taskList.map((element, index) => {
+      if (element.id == id) {
+        const updatedTask: Task = {
+          id: element.id,
+          name: element.name,
+          description: element.description,
+          status: (element.status == "done") ? "wip" : "done"
+        }
+        return updatedTask
+      } else {
+        return element
+      }
+    });
+    setTaskList(updatedTaskList);
+  }
+
+  function sweepDoneTasks() {
+    taskList.forEach((element, index) => {
+      if (element.status == "done") {
+        taskList.splice(index, 1);
+      }
+    })
   }
 
   return (
@@ -58,12 +83,21 @@ const TodoListPage = () => {
           >
             Register Task
           </button>
+          <button
+            onClick={sweepDoneTasks}
+            className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800"
+          >
+            Remove Completed Tasks
+          </button>
         </div>
 
         <div className="overflow-x-auto relative shadow-md sm:rounded-lg mt-12">
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
+                <th scope="col" className="py-3 px-6">
+                  Status
+                </th>
                 <th scope="col" className="py-3 px-6">
                   ID
                 </th>
@@ -81,6 +115,20 @@ const TodoListPage = () => {
                   key={task.name}
                   className="border-b border-gray-200 dark:border-gray-600"
                 >
+                  <td className="py-3 px-6">
+                    <div className="flex items-center">
+                      <span className="font-medium">
+                        <input
+                          id="task-status-checkbox"
+                          type="checkbox"
+                          value=""
+                          onClick={() => { changeTaskStatus(task.id) }}
+                          className="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        >
+                        </input>
+                      </span>
+                    </div>
+                  </td>
                   <td className="py-3 px-6">
                     <div className="flex items-center">
                       <span className="font-medium">{task.id}</span>
