@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 interface Task {
   id: number,
@@ -16,6 +16,10 @@ const TodoListPage = () => {
   const [inputText, setInputText] = useState("")
   const [taskList, setTaskList] = useState<Task[]>([exampleObj])
   const [nextTaskId, setNextTaskId] = useState(0);
+
+  useEffect(() => {
+    localStorage.setItem("taskList", JSON.stringify(taskList));
+  });
 
   function registerNewTask(name: string) {
     const newTask = {
