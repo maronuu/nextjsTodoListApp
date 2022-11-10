@@ -1,32 +1,30 @@
 import { useState } from "react"
 
 interface Task {
-    id: number,
-    name: string,
-    description: string,
+  id: number,
+  name: string,
+  description: string,
 }
 
 const TodoListPage = () => {
-  const obj1:Task = {
-    id: 0,
-    name: "やることの名前",
-    description: "やることの説明",
+  const exampleObj: Task = {
+    id: 1234,
+    name: "Example",
+    description: "Example",
   }
 
   const [inputText, setInputText] = useState("")
+  const [taskList, setTaskList] = useState<Task[]>([exampleObj])
+  const [nextTaskId, setNextTaskId] = useState(0);
 
-  const [taskList, setTaskList] = useState<Task[]>([obj1])
-
-  const [nextTaskId, setnextTaskId] = useState(0);
-  
   function registerNewTask(name: string) {
     const newTask = {
       id: nextTaskId,
       name: name,
-      description: "適当",
+      description: "foo",
     }
     setTaskList([...taskList, newTask])
-    setnextTaskId(nextTaskId + 1);
+    setNextTaskId(nextTaskId + 1);
   }
 
   return (
@@ -74,14 +72,14 @@ const TodoListPage = () => {
                   key={task.name}
                   className="border-b border-gray-200 dark:border-gray-600"
                 >
-                <td className="py-3 px-6">
-                    <div className="flex items-center">
-                        <span className="font-medium">ID:{task.id}</span>
-                    </div>
-                </td>
                   <td className="py-3 px-6">
                     <div className="flex items-center">
-                      <span className="font-medium">タイトル:{task.name}</span>
+                      <span className="font-medium">ID: {task.id}</span>
+                    </div>
+                  </td>
+                  <td className="py-3 px-6">
+                    <div className="flex items-center">
+                      <span className="font-medium">タイトル: {task.name}</span>
                     </div>
                   </td>
                   <td className="py-3 px-6">
