@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import useLocalStorageState from "use-local-storage-state";
 
 
 type TaskStatus = "wip" | "done";
@@ -14,15 +13,16 @@ interface Task {
 const TodoListPage = () => {
 
   const [inputText, setInputText] = useState("")
-  const [taskList, setTaskList] = useLocalStorageState<Task[]>("taskList", {
-    "defaultValue": []
-  })
-  // const [taskList, setTaskList] = useState<Task[]>([])
+  const [taskList, setTaskList] = useState<Task[]>([])
   const [nextTaskId, setNextTaskId] = useState(0);
 
   useEffect(() => {
-    // localStorage.setItem("taskList", JSON.stringify(taskList))
-  });
+    const saved = localStorage.getItem("taskList")
+    if (saved) {
+      const parsed = JSON.parse(saved)
+      setTaskList(parsed)
+    }
+  }, []);
 
   function registerNewTask(name: string) {
     const newTask: Task = {
@@ -31,6 +31,7 @@ const TodoListPage = () => {
       description: "foo",
       status: "wip",
     }
+    localStorage.setItem("taskList", JSON.stringify([...taskList, newTask]))
     setTaskList([...taskList, newTask])
     setNextTaskId(nextTaskId + 1)
   }
@@ -49,11 +50,13 @@ const TodoListPage = () => {
         return element
       }
     });
+    localStorage.setItem("taskList", JSON.stringify(updatedTaskList))
     setTaskList(updatedTaskList);
   }
 
   function sweepDoneTasks() {
     let newTaskList = taskList.filter(task => task.status == "wip")
+    localStorage.setItem("taskList", JSON.stringify(newTaskList))
     setTaskList(newTaskList)
   }
 
