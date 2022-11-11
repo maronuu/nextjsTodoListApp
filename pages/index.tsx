@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react"
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 type TaskStatus = "wip" | "done";
 
 interface Task {
-  id: number,
   name: string,
   description: string,
   status: TaskStatus,
@@ -14,7 +16,6 @@ const TodoListPage = () => {
 
   const [inputText, setInputText] = useState("")
   const [taskList, setTaskList] = useState<Task[]>([])
-  const [nextTaskId, setNextTaskId] = useState(0);
 
   useEffect(() => {
     const saved = localStorage.getItem("taskList")
@@ -26,30 +27,32 @@ const TodoListPage = () => {
 
   function registerNewTask(name: string) {
     const newTask: Task = {
-      id: nextTaskId,
       name: name,
       description: "foo",
       status: "wip",
     }
+
     localStorage.setItem("taskList", JSON.stringify([...taskList, newTask]))
     setTaskList([...taskList, newTask])
-    setNextTaskId(nextTaskId + 1)
+    setInputText("");
   }
 
-  function changeTaskStatus(id: number) {
-    const updatedTaskList = taskList.map((element, index) => {
-      if (element.id == id) {
-        const updatedTask: Task = {
-          id: element.id,
-          name: element.name,
-          description: element.description,
-          status: (element.status == "done") ? "wip" : "done"
-        }
-        return updatedTask
-      } else {
-        return element
-      }
-    });
+  function changeTaskStatus(taskIndex: number) {
+    // const updatedTaskList = taskList.map((element, index) => {
+    //   if (index == taskIndex) {
+    //     const updatedTask: Task = {
+    //       id: element.id,
+    //       name: element.name,
+    //       description: element.description,
+    //       status: (element.status == "done") ? "wip" : "done"
+    //     }
+    //     return updatedTask
+    //   } else {
+    //     return element
+    //   }
+    // });
+    const updatedTaskList = taskList.slice()
+    updatedTaskList[taskIndex].status = (updatedTaskList[taskIndex].status == "wip" ? "done" : "wip")
     localStorage.setItem("taskList", JSON.stringify(updatedTaskList))
     setTaskList(updatedTaskList);
   }
@@ -81,7 +84,6 @@ const TodoListPage = () => {
           <button
             onClick={() => {
               registerNewTask(inputText);
-              setInputText("");
             }}
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
           >
@@ -103,9 +105,6 @@ const TodoListPage = () => {
                   Status
                 </th>
                 <th scope="col" className="py-3 px-6">
-                  ID
-                </th>
-                <th scope="col" className="py-3 px-6">
                   Title
                 </th>
                 <th scope="col" className="py-3 px-6">
@@ -114,7 +113,7 @@ const TodoListPage = () => {
               </tr>
             </thead>
             <tbody>
-              {taskList.map((task) => (
+              {taskList.map((task, index) => (
                 <tr
                   key={task.name}
                   className="border-b border-gray-200 dark:border-gray-600"
@@ -126,16 +125,11 @@ const TodoListPage = () => {
                           id="task-status-checkbox"
                           type="checkbox"
                           value=""
-                          onClick={() => { changeTaskStatus(task.id) }}
+                          onClick={() => { changeTaskStatus(index) }}
                           className="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                         >
                         </input>
                       </span>
-                    </div>
-                  </td>
-                  <td className="py-3 px-6">
-                    <div className="flex items-center">
-                      <span className="font-medium">{task.id}</span>
                     </div>
                   </td>
                   <td className="py-3 px-6">
