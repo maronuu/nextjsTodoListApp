@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react"
 
+import NextNProgress from 'nextjs-progressbar';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Link from "next/link";
 
 
 type TaskStatus = "wip" | "done";
@@ -77,6 +79,7 @@ const TodoListPage = () => {
 
   return (
     <>
+      <NextNProgress />
       <div className="container mx-auto p-4">
         <div className="relative">
           <h1 className="mb-4 text-4xl font-bold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">ToDo List</h1>
@@ -146,7 +149,9 @@ const TodoListPage = () => {
                   </td>
                   <td className="py-3 px-6">
                     <div className="flex items-center">
-                      <span className="font-medium">{task.name}</span>
+                      <Link href={`/${task.uuid}`}>
+                        <span className="font-medium">{task.name}</span>
+                      </Link>
                     </div>
                   </td>
                   <td className="py-3 px-6">
