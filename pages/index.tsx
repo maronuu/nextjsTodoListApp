@@ -7,10 +7,12 @@ import 'react-toastify/dist/ReactToastify.css';
 type TaskStatus = "wip" | "done";
 
 interface Task {
+  uuid: string,
   name: string,
   description: string,
   status: TaskStatus,
 }
+
 
 const TodoListPage = () => {
 
@@ -26,7 +28,9 @@ const TodoListPage = () => {
   }, []);
 
   function registerNewTask(name: string) {
+    const now = new Date()
     const newTask: Task = {
+      uuid: name + "_" + now.toISOString(),
       name: name,
       description: "foo",
       status: "wip",
@@ -34,23 +38,20 @@ const TodoListPage = () => {
 
     localStorage.setItem("taskList", JSON.stringify([...taskList, newTask]))
     setTaskList([...taskList, newTask])
-    setInputText("");
+    setInputText("")
+    toast.success('New Task Registered!', {
+      position: "top-right",
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
   }
 
   function changeTaskStatus(taskIndex: number) {
-    // const updatedTaskList = taskList.map((element, index) => {
-    //   if (index == taskIndex) {
-    //     const updatedTask: Task = {
-    //       id: element.id,
-    //       name: element.name,
-    //       description: element.description,
-    //       status: (element.status == "done") ? "wip" : "done"
-    //     }
-    //     return updatedTask
-    //   } else {
-    //     return element
-    //   }
-    // });
     const updatedTaskList = taskList.slice()
     updatedTaskList[taskIndex].status = (updatedTaskList[taskIndex].status == "wip" ? "done" : "wip")
     localStorage.setItem("taskList", JSON.stringify(updatedTaskList))
@@ -61,6 +62,17 @@ const TodoListPage = () => {
     let newTaskList = taskList.filter(task => task.status == "wip")
     localStorage.setItem("taskList", JSON.stringify(newTaskList))
     setTaskList(newTaskList)
+
+    toast.info('Done!', {
+      position: "top-right",
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
   }
 
   return (
@@ -115,7 +127,7 @@ const TodoListPage = () => {
             <tbody>
               {taskList.map((task, index) => (
                 <tr
-                  key={task.name}
+                  key={task.uuid}
                   className="border-b border-gray-200 dark:border-gray-600"
                 >
                   <td className="py-3 px-6">
@@ -148,6 +160,7 @@ const TodoListPage = () => {
           </table>
         </div>
       </div>
+      <ToastContainer />
     </>
   )
 }
