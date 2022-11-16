@@ -30,6 +30,20 @@ const TodoListPage = () => {
   }, []);
 
   function registerNewTask(name: string) {
+    if (inputText.length == 0) {
+      toast.error("Please input your task!",
+        {
+          position: "top-right",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      return
+    }
     const now = new Date()
     const newTask: Task = {
       uuid: name + "_" + now.toISOString(),
